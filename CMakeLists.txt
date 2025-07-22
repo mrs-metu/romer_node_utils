@@ -1,45 +1,45 @@
-cmake_minimum_required(VERSION 2.8.3)
-project(ros_node_utils)
+cmake_minimum_required(VERSION 3.8)
+project(romer_node_utils)
 
-add_definitions("-std=c++11")
+# Default to C++14
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
 find_package(Eigen3 REQUIRED)
-find_package(catkin REQUIRED
-  COMPONENTS
-    roscpp
+find_package(rclcpp REQUIRED)
+find_package(ament_cmake REQUIRED)
+
+include_directories(include ${EIGEN3_INCLUDE_DIR})
+
+# add_executable(clock_server
+#   src/romer_node_utils/clock_server.cpp
+# )
+
+add_executable(node
+  src/romer_node_utils/node.cpp
 )
 
-catkin_package(
-  INCLUDE_DIRS
-    include
-  LIBRARIES # only header files, therefore no
-  CATKIN_DEPENDS
-    roscpp
+# ament_target_dependencies(clock_server
+#   rclcpp
+# )
+
+ament_target_dependencies(node
+  rclcpp
 )
 
-include_directories(
-  include
-  ${catkin_INCLUDE_DIRS}
-  ${EIGEN3_INCLUDE_DIR}
-)
-link_directories(
-  include
-  ${catkin_LIBRARIES}
+install(TARGETS
+  # clock_server
+  node
+  DESTINATION lib/${PROJECT_NAME}
 )
 
-
-add_executable(clock_server
-  src/ros_node_utils/clock_server.cpp
-)
-add_dependencies(clock_server
-  ${catkin_EXPORTED_TARGETS}
-)
-target_link_libraries(clock_server
-  ${catkin_LIBRARIES}
+install(DIRECTORY include/
+  DESTINATION include/
 )
 
-message( ${CATKIN_PACKAGE_INCLUDE_DESTINATION})
-install(DIRECTORY include/${PROJECT_NAME}/
-        DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-#        PATTERN ".svn" EXCLUDE
-)
+ament_package()
