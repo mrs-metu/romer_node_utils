@@ -13,7 +13,7 @@
 #include <functional>
 #include <memory>
 
-#include <romer_node_utils/ros_node_utils.hpp>
+#include <romer_node_utils/romer_node_utils.hpp>
 
 namespace romer_node_utils {
 
