@@ -4,6 +4,7 @@
  E-mail: m.efetiryaki@gmail.com
  Date created: 24.06.2019
  Date last modified: 24.06.2019
+ Date last modified: Updated for ROS 2
  */
 #pragma once
 
