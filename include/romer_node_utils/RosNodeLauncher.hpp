@@ -14,17 +14,17 @@
 #include <vector>
 
 #include <romer_node_utils/RosNodeBase.hpp>
-#include <romer_node_utils/RosNodeModuleBase.hpp>
 #include <std_srvs/srv/empty.hpp>
 
 namespace romer_node_utils
 {
 
-template <typename NodeType> class RosNodeLauncher : public RosNodeModuleBase
+template <typename NodeType> 
+class RosNodeLauncher
 {
     public:
         RosNodeLauncher(const std::string &node_name)
-            : RosNodeModuleBase(node_name + std::string("_launcher")), node_name_(node_name)
+            : node_name_(node_name)
         {
             create();
             readParameters();
@@ -38,71 +38,53 @@ template <typename NodeType> class RosNodeLauncher : public RosNodeModuleBase
         ~RosNodeLauncher() = default;
 
         // Create the objects in this class
-        void create() override
+        void create()
         {
-            RosNodeModuleBase::create();
-            node_ = std::make_shared<NodeType>(node_name_);  // get_name() is a method of rclcpp::Node
+            node_ = std::make_shared<NodeType>(node_name_);
             node_->create();
-            // WARNING("create : [RosNodeLauncher]");
         }
 
         // Reading parameters
-        void readParameters() override
+        void readParameters()
         {
-            RosNodeModuleBase::readParameters();
             node_->readParameters();
-            // WARNING("readParameters : [RosNodeLauncher]");
         }
 
         // initize class variables
-        void initialize() override
+        void initialize()
         {
-            RosNodeModuleBase::initialize();
             node_->initialize();
-            // WARNING("initialize : [RosNodeLauncher]");
         }
 
         // shutdown class variables
-        void shutdown() override
+        void shutdown()
         {
-            RosNodeModuleBase::shutdown();
             node_->shutdown();
-            // WARNING("shutdown : [RosNodeLauncher]");
         }
 
         // init Publisher
-        void initializePublishers() override
+        void initializePublishers()
         {
-            RosNodeModuleBase::initializePublishers();
             node_->initializePublishers();
-            // WARNING("initializePublishers : [RosNodeLauncher]");
         }
 
         // init Subscribers
-        void initializeSubscribers() override
+        void initializeSubscribers()
         {
-            RosNodeModuleBase::initializeSubscribers();
             node_->initializeSubscribers();
-            // WARNING("initializeSubscribers : [RosNodeLauncher]");
         }
 
-        // init Subscribers
-        void initializeServices() override
+        // init Services
+        void initializeServices()
         {
-            RosNodeModuleBase::initializeServices();
             node_->initializeServices();
-            restart_service_ = this->create_service<std_srvs::srv::Empty>(
-                "~/restart",
-                std::bind(&RosNodeLauncher::nodeRestartCallback, this,
-                          std::placeholders::_1, std::placeholders::_2));
-            // WARNING("initializeServices : [RosNodeLauncher]");
         }
 
         void run() { 
-            rclcpp::Rate loop_rate(2000);
+            rclcpp::Rate loop_rate(2000); // 2000 Hz frequency
             while (rclcpp::ok()) {
-                rclcpp::spin_some(node_);
-                loop_rate.sleep();
+                rclcpp::spin_some(node_); // spin_some spins the node processes available callbacks and returns no blocking
+                loop_rate.sleep(); // sleep for the remaining time to maintain the 2000 Hz frequency
             }
         }
 
@@ -119,16 +101,7 @@ template <typename NodeType> class RosNodeLauncher : public RosNodeModuleBase
             node_->start();
         }
 
-        void nodeRestartCallback(
-            const std::shared_ptr<std_srvs::srv::Empty::Request>,
-            std::shared_ptr<std_srvs::srv::Empty::Response>)
-        {
-            restart();
-        }
-
     protected:
-        typename rclcpp::Service<std_srvs::srv::Empty>::SharedPtr
-            restart_service_;
         std::shared_ptr<RosNodeBase> node_;
         std::string node_name_;
 };

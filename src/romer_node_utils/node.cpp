@@ -25,7 +25,8 @@ int main(int argc, char **argv)
   return 0;
   */
   rclcpp::init(argc, argv);
-  auto launcher = std::make_shared<romer_node_utils::RosNodeLauncher<romer_node_utils::RosNodeModuleBase>>("estimator_node");
+  using namespace romer_node_utils;
+  auto launcher = std::make_shared<RosNodeLauncher<RosNodeBase>>("estimator_node");
   romer_node_utils::CONFIRM("Launcher initialized.");
   launcher->run();
   rclcpp::shutdown();
