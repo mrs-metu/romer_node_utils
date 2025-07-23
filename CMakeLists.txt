@@ -14,20 +14,23 @@ find_package(Eigen3 REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ament_cmake REQUIRED)
 find_package(std_srvs REQUIRED)
+find_package(rosgraph_msgs REQUIRED)
 
 include_directories(include ${EIGEN3_INCLUDE_DIR})
 
-# add_executable(clock_server
-#   src/romer_node_utils/clock_server.cpp
-# )
+add_executable(clock_server
+  src/romer_node_utils/clock_server.cpp
+)
 
 add_executable(node
   src/romer_node_utils/node.cpp
 )
 
-# ament_target_dependencies(clock_server
-#   rclcpp
-# )
+ament_target_dependencies(clock_server
+  rclcpp
+  rosgraph_msgs
+  std_srvs
+)
 
 ament_target_dependencies(node
   rclcpp
@@ -35,7 +38,7 @@ ament_target_dependencies(node
 )
 
 install(TARGETS
-  # clock_server
+  clock_server
   node
   DESTINATION lib/${PROJECT_NAME}
 )

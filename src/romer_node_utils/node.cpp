@@ -17,13 +17,6 @@ int main(int argc, char **argv)
   rclcpp::shutdown();
   return 0;
   */
-  /*
-  auto node = romer_node_utils::ROSINITIALIZE("estimator_launcher");
-  romer_node_utils::RosNodeLauncher<romer_node_utils::RosNodeModuleBase> launcher("estimator_node");
-  launcher.run();
-  romer_node_utils::CONFIRM("Launcher/node initialized and executing.");
-  return 0;
-  */
   rclcpp::init(argc, argv);
   using namespace romer_node_utils;
   auto launcher = std::make_shared<RosNodeLauncher<RosNodeBase>>("estimator_node");
