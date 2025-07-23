@@ -13,6 +13,7 @@ endif()
 find_package(Eigen3 REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(ament_cmake REQUIRED)
+find_package(std_srvs REQUIRED)
 
 include_directories(include ${EIGEN3_INCLUDE_DIR})
 
@@ -30,6 +31,7 @@ add_executable(node
 
 ament_target_dependencies(node
   rclcpp
+  std_srvs
 )
 
 install(TARGETS

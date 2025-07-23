@@ -20,22 +20,11 @@
 namespace romer_node_utils
 {
 
-inline rclcpp::Node::SharedPtr ROSINITIALIZE(const std::string &node_name)
-{
-    int argc = 0;
-    char **argv = {};
-    if (!rclcpp::is_initialized())
-    {
-        rclcpp::init(argc, argv);
-    }
-    return rclcpp::Node::make_shared(node_name);
-};
-
 template <typename NodeType> class RosNodeLauncher : public RosNodeModuleBase
 {
     public:
         RosNodeLauncher(const std::string &node_name)
-            : RosNodeModuleBase(node_name)
+            : RosNodeModuleBase(node_name + std::string("_launcher")), node_name_(node_name)
         {
             create();
             readParameters();
@@ -52,7 +41,7 @@ template <typename NodeType> class RosNodeLauncher : public RosNodeModuleBase
         void create() override
         {
             RosNodeModuleBase::create();
-            node_ = std::make_shared<NodeType>(node_name);
+            node_ = std::make_shared<NodeType>(node_name_);  // get_name() is a method of rclcpp::Node
             node_->create();
             // WARNING("create : [RosNodeLauncher]");
         }
@@ -102,19 +91,25 @@ template <typename NodeType> class RosNodeLauncher : public RosNodeModuleBase
         {
             RosNodeModuleBase::initializeServices();
             node_->initializeServices();
-            nodeRestartServices_ = this->create_service<std_srvs::srv::Empty>(
+            restart_service_ = this->create_service<std_srvs::srv::Empty>(
                 "~/restart",
                 std::bind(&RosNodeLauncher::nodeRestartCallback, this,
                           std::placeholders::_1, std::placeholders::_2));
             // WARNING("initializeServices : [RosNodeLauncher]");
         }
 
-        void run() { rclcpp::spin(shared_from_this()); }
+        void run() { 
+            rclcpp::Rate loop_rate(2000);
+            while (rclcpp::ok()) {
+                rclcpp::spin_some(node_);
+                loop_rate.sleep();
+            }
+        }
 
         void restart()
         {
             node_->shutdown();
-            node_ = std::make_shared<NodeType>(node_name);
+            node_ = std::make_shared<NodeType>(node_name_);
             node_->create();
             node_->readParameters();
             node_->initializePublishers();
@@ -135,5 +130,6 @@ template <typename NodeType> class RosNodeLauncher : public RosNodeModuleBase
         typename rclcpp::Service<std_srvs::srv::Empty>::SharedPtr
             restart_service_;
         std::shared_ptr<RosNodeBase> node_;
+        std::string node_name_;
 };
 } // namespace romer_node_utils
