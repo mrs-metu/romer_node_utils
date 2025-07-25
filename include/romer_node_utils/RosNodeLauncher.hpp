@@ -24,7 +24,7 @@ class RosNodeLauncher
 {
     public:
         RosNodeLauncher(const std::string &node_name)
-            : node_name_(node_name)
+            : nodeName_(node_name)
         {
             create();
             readParameters();
@@ -40,7 +40,7 @@ class RosNodeLauncher
         // Create the objects in this class
         void create()
         {
-            node_ = std::make_shared<NodeType>(node_name_);
+            node_ = std::make_shared<NodeType>(nodeName_);
             node_->create();
         }
 
@@ -91,7 +91,7 @@ class RosNodeLauncher
         void restart()
         {
             node_->shutdown();
-            node_ = std::make_shared<NodeType>(node_name_);
+            node_ = std::make_shared<NodeType>(nodeName_);
             node_->create();
             node_->readParameters();
             node_->initializePublishers();
@@ -103,6 +103,6 @@ class RosNodeLauncher
 
     protected:
         std::shared_ptr<RosNodeBase> node_;
-        std::string node_name_;
+        std::string nodeName_;
 };
 } // namespace romer_node_utils
