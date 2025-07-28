@@ -13,7 +13,7 @@
 #include <rclcpp/rclcpp.hpp>
 #include <vector>
 
-#include <romer_node_utils/RosNodeBase.hpp>
+#include "RosNodeBase.hpp"
 #include <std_srvs/srv/empty.hpp>
 
 namespace romer_node_utils

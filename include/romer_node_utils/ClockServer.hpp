@@ -15,8 +15,8 @@
 #include <chrono>
 
 #include <rclcpp/rclcpp.hpp>
-#include "rosgraph_msgs/msg/clock.hpp"
-#include "romer_node_utils/RosNodeModuleBase.hpp"
+#include <rosgraph_msgs/msg/clock.hpp>
+#include "RosNodeModuleBase.hpp"
 
 namespace romer_node_utils {
 
@@ -51,7 +51,7 @@ class ClockServer : public RosNodeModuleBase
     clockPublisher_->publish(std::move(msg));
   }
 
-  void execute()
+  void execute() override
   {
     while (rclcpp::ok()) {
       if (!isTerminationStarted()) {

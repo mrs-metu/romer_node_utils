@@ -16,7 +16,7 @@
 #include <memory>
 
 
-#include "romer_node_utils/RosNodeBase.hpp"
+#include "RosNodeBase.hpp"
 
 namespace romer_node_utils {
 

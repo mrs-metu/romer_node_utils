@@ -8,7 +8,7 @@
  */
 #pragma once
 
-#include <romer_node_utils/RosNodeBase.hpp>
+#include "RosNodeBase.hpp"
 
 
 namespace romer_node_utils {
@@ -36,7 +36,7 @@ class RosExecuterNodeBase : public RosNodeBase
     initializeActionServers();
   }
 
-  virtual void execute()
+  virtual void execute() override
   {
   }
 
