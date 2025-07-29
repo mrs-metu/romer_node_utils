@@ -47,4 +47,7 @@ install(DIRECTORY include/
   DESTINATION include/
 )
 
+# Export include directories and dependencies
+ament_export_include_directories(include)
+
 ament_package()
