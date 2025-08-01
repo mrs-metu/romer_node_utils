@@ -1,6 +1,6 @@
 /*
  File name: RosNodeLauncher.hpp
- Author: Mehmet Efe Tiryaki
+ Author: Mehmet Efe Tiryaki, Ege Ecevit
  E-mail: m.efetiryaki@gmail.com
  Date created: 24.06.2019
  Date last modified: 24.06.2019
@@ -13,18 +13,18 @@
 #include <rclcpp/rclcpp.hpp>
 #include <vector>
 
-#include "RosNodeBase.hpp"
+#include "RosNodeModuleBase.hpp"
 #include <std_srvs/srv/empty.hpp>
 
 namespace romer_node_utils
 {
 
 template <typename NodeType> 
-class RosNodeLauncher
+class RosNodeLauncher : public RosNodeModuleBase
 {
     public:
-        RosNodeLauncher(const std::string &node_name)
-            : nodeName_(node_name)
+        RosNodeLauncher(rclcpp::Node::SharedPtr node)
+            : RosNodeModuleBase(node)
         {
             create();
             readParameters();
@@ -38,44 +38,44 @@ class RosNodeLauncher
         ~RosNodeLauncher() = default;
 
         // Create the objects in this class
-        void create()
+        void create() override
         {
-            node_ = std::make_shared<NodeType>(nodeName_);
+            node_ = std::make_shared<NodeType>(getNode());
             node_->create();
         }
 
         // Reading parameters
-        void readParameters()
+        void readParameters() override
         {
             node_->readParameters();
         }
 
         // initize class variables
-        void initialize()
+        void initialize() override
         {
             node_->initialize();
         }
 
         // shutdown class variables
-        void shutdown()
+        void shutdown() override
         {
             node_->shutdown();
         }
 
         // init Publisher
-        void initializePublishers()
+        void initializePublishers() override
         {
             node_->initializePublishers();
         }
 
         // init Subscribers
-        void initializeSubscribers()
+        void initializeSubscribers() override
         {
             node_->initializeSubscribers();
         }
 
         // init Services
-        void initializeServices()
+        void initializeServices() override
         {
             node_->initializeServices();
         }
@@ -83,7 +83,7 @@ class RosNodeLauncher
         void run() { 
             rclcpp::Rate loop_rate(2000); // 2000 Hz frequency
             while (rclcpp::ok()) {
-                rclcpp::spin_some(node_); // spin_some spins the node processes available callbacks and returns no blocking
+                rclcpp::spin_some(getNode()); // spin_some spins the node processes available callbacks and returns no blocking
                 loop_rate.sleep(); // sleep for the remaining time to maintain the 2000 Hz frequency
             }
         }
@@ -91,7 +91,7 @@ class RosNodeLauncher
         void restart()
         {
             node_->shutdown();
-            node_ = std::make_shared<NodeType>(nodeName_);
+            node_ = std::make_shared<NodeType>(getNode());
             node_->create();
             node_->readParameters();
             node_->initializePublishers();
@@ -102,7 +102,6 @@ class RosNodeLauncher
         }
 
     protected:
-        std::shared_ptr<RosNodeBase> node_;
-        std::string nodeName_;
+        std::shared_ptr<RosNodeModuleBase> node_;
 };
 } // namespace romer_node_utils

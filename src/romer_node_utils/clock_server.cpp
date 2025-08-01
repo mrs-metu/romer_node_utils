@@ -6,7 +6,8 @@ int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
   using namespace romer_node_utils;
-  auto nodeLauncher = std::make_shared<RosNodeLauncher<ClockServer>>("clock_server");
+  auto node = std::make_shared<rclcpp::Node>("clock_server");
+  auto nodeLauncher = std::make_shared<RosNodeLauncher<ClockServer>>(node);
   romer_node_utils::CONFIRM("Clock Server initialized.");
   nodeLauncher->run();
   rclcpp::shutdown();

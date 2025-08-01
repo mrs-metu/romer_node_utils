@@ -1,6 +1,6 @@
 /*
  File name: RosNodeModuleBase.hpp
- Author: Mehmet Efe Tiryaki
+ Author: Mehmet Efe Tiryaki, Ege Ecevit
  E-mail: m.efetiryaki@gmail.com
  Date created: 12.02.2018
  Date last modified: 13.02.2019
@@ -14,36 +14,87 @@
 #include <functional>
 #include <mutex>
 #include <memory>
-
-
-#include "RosNodeBase.hpp"
+#include "romer_node_utils.hpp"
 
 namespace romer_node_utils {
 
-class RosNodeModuleBase : public RosNodeBase
+class RosNodeModuleBase
 {
  public:
-  RosNodeModuleBase(const std::string& node_name) 
-  : RosNodeBase(node_name), shutdownMutex_(std::make_unique<std::mutex>()), terminated_(false), terminate_(false)
+  RosNodeModuleBase(rclcpp::Node::SharedPtr node) 
+  : node_(node), shutdownMutex_(std::make_unique<std::mutex>()), terminated_(false), terminate_(false)
   {
 
   }
 
   virtual ~RosNodeModuleBase() = default;
 
-  virtual void create() override
+  virtual void create()
   {
-    RosNodeBase::create();
     terminated_ = false;
     terminate_ = false;
   }
 
-  virtual void shutdown() override
+  virtual void shutdown()
   {
     terminate_ = true;
   }
 
   virtual void clean()
+  {
+
+  }
+
+  // Reading parameters
+  virtual void readParameters()
+  {
+
+  }
+
+  // initize class variables
+  virtual void initialize()
+  {
+
+  }
+
+
+
+  // init Publisher
+  virtual void initializePublishers()
+  {
+
+  }
+
+  // init Subscribers
+  virtual void initializeSubscribers()
+  {
+
+  }
+
+  // init Services
+  virtual void initializeServices()
+  {
+
+  }
+
+  // init Services
+  virtual void initializeActionServers()
+  {
+
+  }
+
+
+  virtual void execute()
+  {
+
+  }
+
+  virtual void start()
+  {
+
+  }
+
+  virtual void stop()
   {
 
   }
@@ -63,7 +114,13 @@ class RosNodeModuleBase : public RosNodeBase
     return terminate_;
   }
 
+  rclcpp::Node::SharedPtr getNode()
+  {
+    return node_;
+  }
+
  protected:
+  rclcpp::Node::SharedPtr node_;
   std::unique_ptr<std::mutex> shutdownMutex_;
   bool terminated_;
   bool terminate_;

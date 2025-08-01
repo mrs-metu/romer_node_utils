@@ -1,6 +1,6 @@
 /*
  File name: ClockServer.hpp
- Author: Mehmet Efe Tiryaki
+ Author: Mehmet Efe Tiryaki, Ege Ecevit
  E-mail: m.efetiryaki@gmail.com
  Date created: 19.06.2018
  Date last modified: 13.02.2019
@@ -23,8 +23,8 @@ namespace romer_node_utils {
 class ClockServer : public RosNodeModuleBase
 {
  public:
-  ClockServer(const std::string& node_name)
-      : RosNodeModuleBase(node_name), startTime_(0)
+  ClockServer(rclcpp::Node::SharedPtr node)
+      : RosNodeModuleBase(node), startTime_(0)
   {
   }
 
@@ -32,20 +32,19 @@ class ClockServer : public RosNodeModuleBase
 
   void create() override
   {
-    RosNodeModuleBase::create();
     clockRate_ = 1000;
-    this->rate_ = std::make_shared<rclcpp::Rate>(clockRate_);
-    startTime_ = this->now().seconds();
+    rate_ = std::make_shared<rclcpp::Rate>(clockRate_);
+    startTime_ = getNode()->now().seconds();
   }
 
   void initializePublishers() override
   {
-    clockPublisher_ = this->create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
+    clockPublisher_ = getNode()->create_publisher<rosgraph_msgs::msg::Clock>("/clock", 10);
   }
 
   void advance()
   {
-    timeNow_ =   this->now().seconds() - startTime_;
+    timeNow_ =   getNode()->now().seconds() - startTime_;
     auto msg = std::make_unique<rosgraph_msgs::msg::Clock>();
     msg->clock = rclcpp::Time(timeNow_ * 1e9); // Convert to nanoseconds
     clockPublisher_->publish(std::move(msg));
